@@ -1,0 +1,45 @@
+[project]
+name = "zerva"
+version = "0.1.0"
+description = "Zerva - Iran Gold Industry Infrastructure Platform - Core API"
+requires-python = ">=3.12,<3.14"
+
+dependencies = [
+    "Django==6.0.8",
+    "djangorestframework==3.18.0",
+    "channels==4.3.2",
+    "daphne==4.2.3",
+    "celery==5.6.3",
+    "redis==8.1.0",
+    "django-environ==0.14.0",
+    "psycopg[binary]==3.3.4",
+    "drf-spectacular==0.30.0",
+    "django-cors-headers==4.9.0",
+    "djangorestframework-simplejwt==5.5.1",
+    "channels_redis==4.3.0",
+]
+
+[dependency-groups]
+test = [
+    "pytest==9.1.1",
+    "pytest-django==4.14.0",
+    "factory-boy",
+]
+lint = [
+    "ruff==0.16.3",
+]
+dev = [
+    "pre-commit",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["migrations"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "DJ"]
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.test"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]

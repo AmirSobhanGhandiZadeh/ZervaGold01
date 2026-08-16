@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: zerva
+          POSTGRES_USER: zerva
+          POSTGRES_PASSWORD: zerva
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U zerva -d zerva"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      redis:
+        image: redis:8
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DJANGO_SETTINGS_MODULE: config.settings.test
+      SECRET_KEY: ci-test-secret-key
+      DATABASE_URL: postgresql://zerva:zerva@localhost:5432/zerva
+      REDIS_URL: redis://localhost:6379/0
+      ALLOWED_HOSTS: localhost,127.0.0.1
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -e .
+          pip install pytest==9.1.1 pytest-django==4.14.0 ruff==0.16.3
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Format check
+        run: ruff format --check .
+
+      - name: System check
+        run: python manage.py check
+
+      - name: Migration check (no pending model changes)
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Run migrations
+        run: python manage.py migrate
+
+      - name: Test
+        run: pytest -q
+
+      - name: OpenAPI schema generation
+        run: python manage.py spectacular --file schema.yml
+
+      - name: Docker build
+        run: docker build .
