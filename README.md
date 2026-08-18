@@ -31,7 +31,11 @@ Modular Monolith (Django) روی ۱۰ App مستقل دامنه‌ای:
 | `b2b_ledger` | حساب باز طلافروش↔بنکدار، درخواست بنکدار↔طلاساز |
 | `platform` | Audit، Outbox، Idempotency |
 
+<<<<<<< HEAD
 `identity`، `tenancy` و `catalog` در این مرحله کامل پیاده‌سازی شده‌اند (طبق توالی Commit در ZRV-ENG-002)؛ بقیه به‌صورت Skeleton آماده Commitهای بعدی هستند.
+=======
+فقط `identity` در این مرحله کامل پیاده‌سازی شده (طبق توالی Commit در ZRV-ENG-002)؛ بقیه به‌صورت Skeleton آماده Commitهای بعدی هستند.
+>>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
 
 ## پیش‌نیاز
 
@@ -49,7 +53,10 @@ docker compose up -d
 
 docker compose exec api python manage.py migrate
 docker compose exec api python manage.py seed_kyc_tiers
+<<<<<<< HEAD
 docker compose exec api python manage.py seed_asset_types
+=======
+>>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
 
 open http://localhost:8000/docs/
 ```

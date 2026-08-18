@@ -1,4 +1,5 @@
 """
+<<<<<<< HEAD
 Catalog App
 
 مرجع: ZRV-ERD-002 بخش ۵.۱ (دامنه کاتالوگ و قیمت‌گذاری - AssetType)
@@ -33,3 +34,15 @@ class AssetType(models.Model):
     def __str__(self):
         flag = "✓" if self.is_active else "✗"
         return f"{self.display_name_fa} [{flag}]"
+=======
+کاتالوگ دارایی
+
+مرجع: ZRV-ERD-002 / ZRV-ENG-002
+این App طبق توالی Commit پیشنهادی در Commit 4 پر می‌شود.
+مدل‌های این App هنوز پیاده‌سازی نشده‌اند — این فایل عمداً خالی نگه داشته
+شده تا INSTALLED_APPS بدون خطا Resolve شود و ساختار از روز اول ثابت بماند
+(طبق ADR-080: First Production Slice کوچک می‌ماند).
+"""
+
+from django.db import models  # noqa: F401
+>>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
