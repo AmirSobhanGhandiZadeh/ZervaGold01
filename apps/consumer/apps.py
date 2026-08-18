@@ -1,0 +1,8 @@
+from django.apps import AppConfig
+
+
+class ConsumerConfig(AppConfig):
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "apps.consumer"
+    label = "consumer"
+    verbose_name = "سفارش خریدار"

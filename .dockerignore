@@ -1,0 +1,16 @@
+.git
+.github
+.venv
+__pycache__
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.env
+*.pyc
+*.pyo
+*.pyd
+media
+staticfiles
+docker-data
+db.sqlite3
+test_db.sqlite3
