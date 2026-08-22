@@ -15,10 +15,8 @@ makemigrations:
 
 seed:
 	docker compose exec api python manage.py seed_kyc_tiers
-<<<<<<< HEAD
 	docker compose exec api python manage.py seed_asset_types
-=======
->>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
+	docker compose exec api python manage.py seed_pricing_providers
 
 test:
 	docker compose exec api pytest -q
@@ -39,10 +37,8 @@ bootstrap:
 	docker compose up -d
 	docker compose exec api python manage.py migrate
 	docker compose exec api python manage.py seed_kyc_tiers
-<<<<<<< HEAD
 	docker compose exec api python manage.py seed_asset_types
-=======
->>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
+	docker compose exec api python manage.py seed_pricing_providers
 	docker compose exec api python manage.py check
 
 reset:
@@ -50,9 +46,7 @@ reset:
 	docker compose up -d
 	docker compose exec api python manage.py migrate
 	docker compose exec api python manage.py seed_kyc_tiers
-<<<<<<< HEAD
 	docker compose exec api python manage.py seed_asset_types
-=======
->>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
+	docker compose exec api python manage.py seed_pricing_providers
 
 .PHONY: up down logs migrate makemigrations seed test lint format check shell bootstrap reset

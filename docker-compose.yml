@@ -32,10 +32,8 @@ services:
       sh -c "
       python manage.py migrate &&
       python manage.py seed_kyc_tiers &&
-<<<<<<< HEAD
       python manage.py seed_asset_types &&
-=======
->>>>>>> 0dfcb39eefd20b7a97a77192d8c4042942337d0e
+      python manage.py seed_pricing_providers &&
       daphne -b 0.0.0.0 -p 8000 config.asgi:application
       "
     env_file:
