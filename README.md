@@ -31,7 +31,28 @@ Modular Monolith (Django) روی ۱۰ App مستقل دامنه‌ای:
 | `b2b_ledger` | حساب باز طلافروش↔بنکدار، درخواست بنکدار↔طلاساز |
 | `platform` | Audit، Outbox، Idempotency |
 
-`identity`، `tenancy`، `catalog`، `pricing`، `inventory` و `rfid` در این مرحله کامل پیاده‌سازی شده‌اند (طبق توالی Commit در ZRV-ENG-002)؛ بقیه به‌صورت Skeleton آماده Commitهای بعدی هستند.
+تمام ۱۰ App طبق ZRV-ENG-002 کامل پیاده‌سازی شده‌اند: `identity`، `tenancy`، `catalog`، `pricing`، `inventory`، `rfid`، `ledger`، `consumer`، `b2b_ledger` و `platform`. Sprint 0 تکمیل است.
+
+### وضعیت نهایی Sprint 0
+
+| مورد | نتیجه |
+|---|---|
+| App | ۱۰ از ۱۰ |
+| Migration | ۲۹ فایل، از دیتابیس خالی تست‌شده |
+| تست | ۷۲ از ۷۲ Pass |
+| Lint/Format | تمیز (Ruff) |
+| `check --deploy` (Production) | بدون هشدار |
+| Seed | KYC Tiers + Asset Types + Pricing Providers |
+
+### گام بعدی
+
+طبق نقشه راه (`ZRV-DATA-001`، `ZRV-WF-001`)، فاز بعد از Sprint 0 شامل موارد زیر است — هیچ‌کدام هنوز شروع نشده:
+
+- لایه API (DRF Views/Serializers/Application Services روی مدل‌های موجود)
+- تصمیم نهایی مکانیزم پرداخت درون‌برنامه‌ای خریدار↔طلافروشی
+- فرمول دقیق `AutoApprovalPolicy` (فعلاً 🧮 TBD)
+- زیرسیستم واقعی RFID (این Repo فقط مرز داده‌ای آن را دارد)
+- اتصال واقعی Providerهای قیمت (BrsApi/TGJU) از طریق Celery Task
 
 ## پیش‌نیاز
 
