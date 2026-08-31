@@ -1,28 +1,41 @@
-FROM python:3.12-slim
+# Stage 1: Builder
+FROM python:3.11-slim as builder
 
+WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN addgroup --system zerva \
-    && adduser --system --ingroup zerva zerva
-
-COPY pyproject.toml ./
-
-# نکته: این Image عمداً Single-stage است (شامل ابزار Dev/Test هم می‌شود)؛
-# طبق ZRV-BOOT-001 بخش ۲۰، جدا کردن Build/Runtime Multi-stage برای
-# Production یک بهبود مستند و آگاهانه برای فاز بعد است، نه الان.
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -e . \
-    && pip install --no-cache-dir pytest==9.1.1 pytest-django==4.14.0 ruff==0.16.3
+RUN pip install --upgrade pip
+COPY pyproject.toml .
+RUN pip install .
 
 COPY . .
+RUN python manage.py collectstatic --noinput
 
-RUN chown -R zerva:zerva /app
+# Stage 2: Production
+FROM python:3.11-slim
 
-USER zerva
+WORKDIR /app
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && useradd -m -u 1000 appuser
+
+COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
+COPY --from=builder /usr/local/bin /usr/local/bin
+COPY --from=builder /app .
+
+RUN chown -R appuser:appuser /app
+USER appuser
 
 EXPOSE 8000
 
-CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "config.asgi:application"]
+CMD ["sh", "-c", "python manage.py migrate --noinput && gunicorn config.wsgi:application --bind 0.0.0.0:8000"]
