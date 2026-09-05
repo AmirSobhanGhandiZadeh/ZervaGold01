@@ -1,65 +1,61 @@
-```
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 *.pyo
 *.pyd
-.Python
-env/
-venv/
+
+# Virtual environments
 .venv/
-.ENV
-.env
-.env.*
-.venv.bak/
-pip-log.txt
-pip-delete-this-directory.txt
+venv/
+env/
 
-# Testing
-.coverage
-coverage/
-htmlcov/
-.noserc
-.tox/
-.cover/
+# Django
+*.log
+db.sqlite3
+*.sqlite3-journal
+media/
+staticfiles/
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
-# Celery
-celerybeat-schedule
+# Celery (Beat local scheduler state — runtime artifact, never commit)
+celerybeat-schedule*
 celerybeat.pid
 
-# IDEs
-.vscode/
+# Generated OpenAPI schema (CI regenerates this every run; never commit)
+schema.yml
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
 .idea/
+.vscode/
 *.swp
 *.swo
 
 # OS
 .DS_Store
-Thumbs.db
 
-# Logs
-*.log
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# Environment
-.env
-.env.local
-.env.*
-```
+# Build
+dist/
+build/
+*.egg-info/
+
+# Docker
+docker-data/
+
+# Secrets
+*.pem
+*.key
+
+# Temporary
+tmp/
+temp/

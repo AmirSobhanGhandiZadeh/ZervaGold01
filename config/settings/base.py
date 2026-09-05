@@ -1,9 +1,12 @@
 """
 Zerva Core - Base Settings
-...
+
+مرجع: ZRV-BOOT-001, ZRV-ENG-001, ZRV-ENG-002
+این فایل مستقیماً استفاده نمی‌شود؛ local.py / test.py / production.py آن را import می‌کنند.
 """
 
 from pathlib import Path
+
 import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -23,6 +26,8 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
 # ---------------------------------------------------------------------------
 # Applications
+#
+# ترتیب زیر عمداً با ترتیب Migration در ZRV-ENG-002 (بخش ۷) هماهنگ است.
 # ---------------------------------------------------------------------------
 
 DJANGO_APPS = [
@@ -39,9 +44,9 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "corsheaders",
     "channels",
-    # 'ratelimit' # معمولا نیازی نیست مگر middleware خاص
 ]
 
+# Zerva domain apps - به‌ترتیب نگاشت ZRV-ENG-002 بخش ۲/۷
 ZERVA_APPS = [
     "apps.identity",
     "apps.tenancy",
@@ -53,13 +58,13 @@ ZERVA_APPS = [
     "apps.consumer",
     "apps.b2b_ledger",
     "apps.platform",
-    "apps.common",  # اصلاح شده به apps.common
+    "common",
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + ZERVA_APPS
 
 # ---------------------------------------------------------------------------
-# Custom User Model
+# Custom User Model - طبق ADR-006، قبل از اولین Migration Freeze شده
 # ---------------------------------------------------------------------------
 
 AUTH_USER_MODEL = "identity.User"
@@ -77,8 +82,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # "common.observability.middleware.RequestIdMiddleware", # اگر این فایل وجود ندارد کامنت شود
-    "apps.common.middlewares.ErrorHandlerMiddleware",
+    "common.observability.middleware.RequestIdMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -103,7 +107,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 ASGI_APPLICATION = "config.asgi.application"
 
 # ---------------------------------------------------------------------------
-# Database
+# Database - PostgreSQL طبق ADR-004 (System of Record)
 # ---------------------------------------------------------------------------
 
 DATABASES = {
@@ -117,7 +121,11 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # ---------------------------------------------------------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
-    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    # توجه: زروا از پسورد ثابت استفاده نمی‌کند (فقط OTP طبق ZRV-FLOW-001).
+    # این Validatorها صرفاً برای حساب‌های Django Admin داخلی نگه داشته شده‌اند.
+    {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"  # noqa: E501
+    },
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
@@ -163,7 +171,7 @@ CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
 
 # ---------------------------------------------------------------------------
-# Channels
+# Channels (Live Pricing WebSocket - ADR-027)
 # ---------------------------------------------------------------------------
 
 CHANNEL_LAYERS = {
@@ -193,7 +201,7 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "DEFAULT_PAGINATION_CLASS": "apps.common.pagination.DynamicPageNumberPagination", # استفاده از Pagination سفارشی
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
 }
 
@@ -204,46 +212,26 @@ SPECTACULAR_SETTINGS = {
 }
 
 # ---------------------------------------------------------------------------
-# Logging
+# Logging - Structured, با Request ID (ADR-046)
 # ---------------------------------------------------------------------------
 
-LOG_DIR = BASE_DIR / 'logs'
-LOG_DIR.mkdir(exist_ok=True, parents=True)
-
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-            'style': '{',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "readable": {
+            "format": "[{asctime}] {levelname} {name} - {message}",
+            "style": "{",
         },
     },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'class': 'logging.FileHandler',
-            'filename': str(LOG_DIR / 'debug.log'),
-            'formatter': 'verbose',
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "readable",
         },
     },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['console', 'file'],
-            'level': 'INFO',
-            'propagate': False,
-        },
-        'apps': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
+    "root": {
+        "handlers": ["console"],
+        "level": "INFO",
     },
 }

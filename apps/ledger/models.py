@@ -140,21 +140,15 @@ class GoldLedgerTransaction(models.Model):
     """
     مرجع: ZRV-ERD-002 بخش ۷.۳ / جدول `gold_ledger_transactions`
 
-<<<<<<< Updated upstream
     source_order اینجا (در Commit 8) اضافه شد؛ در Commit 7 عمداً غایب
     بود چون consumer.BuyerOrder هنوز وجود نداشت - طبق وابستگی دوطرفه‌ی
     مستند در ZRV-ENG-002 بخش ۷.
-=======
-    توجه: source_order_id (FK به consumer.BuyerOrder) عمداً از این
-    Commit غایب است - در Commit 8 اضافه می‌شود.
->>>>>>> Stashed changes
     """
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     transaction_type = models.CharField(
         max_length=20, choices=GoldLedgerTransactionType.choices
     )
-<<<<<<< Updated upstream
     source_order = models.ForeignKey(
         "consumer.BuyerOrder",
         on_delete=models.PROTECT,
@@ -162,8 +156,6 @@ class GoldLedgerTransaction(models.Model):
         blank=True,
         related_name="ledger_transactions",
     )
-=======
->>>>>>> Stashed changes
     occurred_at = models.DateTimeField()
     created_at = models.DateTimeField(auto_now_add=True)
     idempotency_key = models.CharField(max_length=100, unique=True)

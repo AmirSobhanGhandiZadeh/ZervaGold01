@@ -50,23 +50,3 @@ select = ["E", "F", "I", "B", "DJ"]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "config.settings.test"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
-
-[tool.coverage.run]
-branch = true
-source = ["apps", "common"]
-omit = [
-    "*/migrations/*",
-    "*/tests/*",
-    "*/__pycache__/*",
-    "config/*",
-]
-
-[tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "def __repr__",
-    "raise AssertionError",
-    "raise NotImplementedError",
-    "if TYPE_CHECKING:",
-    "if __name__ == .__main__.:",
-]
